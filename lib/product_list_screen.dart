@@ -3,9 +3,9 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_cart/cart_screen.dart';
+import 'package:shopping_cart/hive/hive_product_model.dart';
 import 'package:shopping_cart/product_controller.dart';
 import 'package:shopping_cart/state_controller.dart';
-import 'hive/hive_product_model.dart';
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
@@ -81,43 +81,36 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 crossAxisSpacing: 8,
                 childAspectRatio: 0.8),
             itemBuilder: (context, index) {
+              final data = productControllerData.productList[index];
               return Card(
                 child: Column(
                   children: [
                     Image.network(
-                      productControllerData.productList[index].imgUrl,
+                      data.imgUrl,
                       height: 120,
                       width: 120,
                     ),
                     Text(
-                      productControllerData.productList[index].title,
+                      data.title,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Text("\$${productControllerData.productList[index].price}"),
+                    Text("\$${data.price}"),
                     Consumer<StateController>(
                       builder: (context, stateControllerData, child) {
                         return ElevatedButton(
                             onPressed: () async {
-                              ProductModel product = ProductModel(
-                                id: productControllerData.productList[index].id,
-                                title: productControllerData
-                                    .productList[index].title,
-                                price: productControllerData
-                                    .productList[index].price,
-                                qty: productControllerData
-                                    .productList[index].qty,
-                                imgUrl: productControllerData
-                                    .productList[index].imgUrl,
-                              );
                               await stateControllerData.addToCart(
-                                  product: product);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content:
-                                      Text('Item Successfully added to cart!'),
-                                  duration: Duration(seconds: 3),
-                                ),
-                              );
+                                  title: data.title,
+                                  id: data.id,
+                                  imgUrl: data.imgUrl,
+                                  price: data.price,
+                                  qty: data.qty);
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content:
+                                    Text('Item Successfully added to cart!'),
+                                duration: Duration(seconds: 3),
+                              ));
                             },
                             child: const Text("Add"));
                       },

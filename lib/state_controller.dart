@@ -7,7 +7,21 @@ class StateController extends ChangeNotifier {
 
   late List<ProductModel> allProducts;
 
-  addToCart({required ProductModel product}) {
+  double totalCartValue = 0;
+
+  addToCart(
+      {required int id,
+      required String title,
+      required double price,
+      required int qty,
+      required String imgUrl}) {
+    ProductModel product = ProductModel(
+      id: id,
+      title: title,
+      price: price,
+      qty: qty,
+      imgUrl: imgUrl,
+    );
     shoppingCartBox.add(product);
     notifyListeners();
   }
@@ -20,6 +34,7 @@ class StateController extends ChangeNotifier {
 
   getAllCart() {
     allProducts = shoppingCartBox.values.toList();
+    totalProductPrice();
     notifyListeners();
   }
 
@@ -28,7 +43,6 @@ class StateController extends ChangeNotifier {
     required int quantity,
   }) {
     final existingProduct = shoppingCartBox.getAt(index);
-
     if (existingProduct != null) {
       existingProduct.qty = quantity;
       shoppingCartBox.putAt(index, existingProduct);
@@ -46,13 +60,23 @@ class StateController extends ChangeNotifier {
   }) {
     final existingProduct = shoppingCartBox.getAt(index);
     if (existingProduct != null) {
-      existingProduct.qty = quantity;
-      shoppingCartBox.putAt(index, existingProduct);
-      getAllCart();
-      notifyListeners();
-      print('Quantity updated for product at index $index.');
+      if (quantity > 1) {
+        shoppingCartBox.putAt(index, quantity as ProductModel);
+        getAllCart();
+        notifyListeners();
+        print('Quantity updated for product at index $index.');
+      } else {
+        print('Quantity for product at index $index is already 1 or less.');
+      }
     } else {
       print('No product found at index $index.');
+    }
+  }
+
+  totalProductPrice() {
+    totalCartValue = 0;
+    for (var f in allProducts) {
+      totalCartValue += f.price * f.qty;
     }
   }
 }

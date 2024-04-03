@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_cart/state_controller.dart';
 
@@ -99,10 +98,13 @@ class _CartScreenState extends State<CartScreen> {
                                           children: [
                                             GestureDetector(
                                               onTap: () {
-                                                stateControllerData
-                                                    .addProductQty(
-                                                        index: index,
-                                                        quantity: data.qty - 1);
+                                                if (data.qty > 1) {
+                                                  stateControllerData
+                                                      .addProductQty(
+                                                          index: index,
+                                                          quantity:
+                                                              data.qty - 1);
+                                                }
                                               },
                                               child: const Icon(
                                                 CupertinoIcons
@@ -143,6 +145,7 @@ class _CartScreenState extends State<CartScreen> {
                             );
                           },
                         ),
+                        const SizedBox(height: 50),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -158,17 +161,17 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                           ],
                         ),
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               "Total Price",
                               style: TextStyle(
                                   fontWeight: FontWeight.w600, fontSize: 14),
                             ),
                             Text(
-                              "\$20",
-                              style: TextStyle(
+                              "\$${stateControllerData.totalCartValue.toString()}",
+                              style: const TextStyle(
                                   fontWeight: FontWeight.w400, fontSize: 14),
                             ),
                           ],
